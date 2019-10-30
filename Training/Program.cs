@@ -14,8 +14,8 @@ namespace MLExploration
             // Load training and validation data from TSV file
             IDataView dataView = mlContext.Data.LoadFromTextFile<DataRow>(path: Configuration.trainingDataPath, hasHeader: true, separatorChar: '\t');
 
-            // Split data into training and validation sets, 70% training, 30% validation
-            TrainTestData dataSplit = mlContext.Data.TrainTestSplit(dataView, testFraction: 0.3);
+            // Split data into training and validation sets, 90% training, 10% validation
+            TrainTestData dataSplit = mlContext.Data.TrainTestSplit(dataView, testFraction: 0.1);
             IDataView trainingData = dataSplit.TrainSet;
             IDataView validationData = dataSplit.TestSet;
 
@@ -23,7 +23,7 @@ namespace MLExploration
             var dataProcessPipeline = mlContext.Transforms.NormalizeLogMeanVariance("Features");
 
             // RedWon is boolean label column, Features is array of all normalized team stats
-            var trainer = mlContext.BinaryClassification.Trainers.LinearSvm(labelColumnName: "RedWon", featureColumnName: "Features", numberOfIterations: 25);
+            var trainer = mlContext.BinaryClassification.Trainers.LinearSvm(labelColumnName: "RedWon", featureColumnName: "Features", numberOfIterations: 15);
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 
             // Train model

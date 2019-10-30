@@ -38,18 +38,6 @@ namespace Shared
         public string[] BlueAlliance { get; set; }
     }
 
-    public class Team
-    {
-        [JsonProperty("team")]
-        public string Number { get; set; }
-
-        [JsonProperty("rank")]
-        public int Rank { get; set; }
-
-        [JsonProperty("rankingScore")]
-        public double RankingScore { get; set; }
-    }
-
     public class Schema
     {
         [JsonProperty("schema")]

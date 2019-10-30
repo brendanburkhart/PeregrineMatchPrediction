@@ -24,19 +24,14 @@ namespace MLExploration.DataCleaning
             return serializer.Deserialize<Schema>(json);
         }
 
-        private static Dictionary<string, Dictionary<string, double>> ProcessTeamStats(List<TeamStats> teamStats, List<Team> teams, Schema schema)
+        private static Dictionary<string, Dictionary<string, double>> ProcessTeamStats(List<TeamStats> teamStats, Schema schema)
         {
             Dictionary<string, Dictionary<string, double>> processedStats = new Dictionary<string, Dictionary<string, double>>();
 
-            foreach (var team in teams)
-            {
-                processedStats.Add(team.Number, new Dictionary<string, double>());
-                processedStats[team.Number].Add("rank", team.Rank);
-                processedStats[team.Number].Add("rankingScore", team.RankingScore);
-            }
-
             foreach (var stats in teamStats)
             {
+                processedStats.Add(stats.TeamNumber, new Dictionary<string, double>());
+
                 foreach (var stat in stats.Stats)
                 {
                     var statName = stat.Name.Replace(" ", "");
@@ -57,15 +52,13 @@ namespace MLExploration.DataCleaning
         {
             List<TeamStats> teamStats = LoadData<TeamStats>(Configuration.statsPath);
             List<Match> matches = LoadData<Match>(Configuration.matchesPath);
-            List<Team> teams = LoadData<Team>(Configuration.teamsPath);
             Schema schema = LoadSchema(Configuration.schemaPath);
 
-            Dictionary<string, Dictionary<string, double>> processedTeamStats = ProcessTeamStats(teamStats, teams, schema);
+            Dictionary<string, Dictionary<string, double>> processedTeamStats = ProcessTeamStats(teamStats, schema);
 
             string header = "didRedWin\tdata";
 
-            List<string> statNames = new List<string>() { "rank", "rankingScore" }
-                                     .Union(schema.stats.Select(description => description.Name.Replace(" ", "") + "Max"))
+            List<string> statNames = schema.stats.Select(description => description.Name.Replace(" ", "") + "Max")
                                      .Union(schema.stats.Select(description => description.Name.Replace(" ", "") + "Avg"))
                                      .ToList();
 
